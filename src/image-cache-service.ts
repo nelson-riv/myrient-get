@@ -2,8 +2,13 @@ import axios from "axios"
 import * as fs from "fs"
 import * as path from "path"
 import * as crypto from "crypto"
-import * as dns from "dns/promises"
+import {
+  LookupAddress,
+  promises as dns,
+} from "dns"
 import * as net from "net"
+import * as http from "http"
+import * as https from "https"
 
 const IMAGE_CACHE_DIR = path.join(__dirname, "..", "data", "image-cache")
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
@@ -19,6 +24,13 @@ interface CachedImage {
   localPath: string
   cachedAt: number
 }
+
+type PinnedAddress = {
+  address: string
+  family: number
+}
+
+type AgentLookup = NonNullable<http.AgentOptions["lookup"]>
 
 /**
  * Image Cache Service
@@ -95,7 +107,9 @@ export class ImageCacheService {
     }
 
     try {
-      await this.assertSafeRemoteImageUrl(imageUrl)
+      const parsedUrl = new URL(imageUrl)
+      const pinnedAddress = await this.assertSafeRemoteImageUrl(imageUrl)
+      const pinnedLookup = this.createPinnedLookup(parsedUrl.hostname, pinnedAddress)
 
       // Download image
       console.log(`  Downloading: ${gameTitle}`)
@@ -104,6 +118,9 @@ export class ImageCacheService {
         timeout: 10000,
         maxContentLength: MAX_IMAGE_BYTES,
         maxBodyLength: MAX_IMAGE_BYTES,
+        maxRedirects: 0,
+        httpAgent: new http.Agent({ lookup: pinnedLookup }),
+        httpsAgent: new https.Agent({ lookup: pinnedLookup }),
         headers: {
           "User-Agent": "Myrient-Get/1.0 (+https://github.com/myrient-get)",
         },
@@ -234,7 +251,7 @@ export class ImageCacheService {
     return "jpg" // Default
   }
 
-  private async assertSafeRemoteImageUrl(imageUrl: string): Promise<void> {
+  private async assertSafeRemoteImageUrl(imageUrl: string): Promise<PinnedAddress> {
     const parsedUrl = new URL(imageUrl)
     const hostname = parsedUrl.hostname.toLowerCase()
 
@@ -256,6 +273,41 @@ export class ImageCacheService {
         throw new Error("Resolved image host points to a private network")
       }
     }
+
+    return {
+      address: addresses[0].address,
+      family: addresses[0].family,
+    }
+  }
+
+  private createPinnedLookup(
+    expectedHostname: string,
+    pinnedAddress: PinnedAddress,
+  ): AgentLookup {
+    const pinnedLookup = (
+      (
+        hostname: string,
+        _options: unknown,
+        callback: (
+          error: Error | null,
+          address: string,
+          family: number,
+        ) => void,
+      ) => {
+        if (hostname.toLowerCase() !== expectedHostname.toLowerCase()) {
+          callback(
+            new Error("Unexpected hostname during remote image fetch"),
+            pinnedAddress.address,
+            pinnedAddress.family,
+          )
+          return
+        }
+
+        callback(null, pinnedAddress.address, pinnedAddress.family)
+      }
+    ) as AgentLookup
+
+    return pinnedLookup
   }
 
   private isPrivateOrLoopbackIp(address: string): boolean {
