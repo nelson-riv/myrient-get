@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Myrient Get - Multi-Platform Game Downloader</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo-section">
+          <h1>🎮 Myrient Get</h1>
+          <p>Download and manage Myrient games across multiple platforms</p>
+        </div>
+        <div class="stats-section">
+          <div class="stat-item">
+            <span class="stat-label">Total Games:</span>
+            <span class="stat-value" id="totalGames">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Downloaded:</span>
+            <span class="stat-value" id="downloadedCount">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="tabs">
+        <button class="tab-btn active" data-tab="browse">Browse Games</button>
+        <button class="tab-btn" data-tab="downloaded">Downloaded</button>
+        <button class="tab-btn" data-tab="settings">Settings</button>
+      </nav>
+
+      <!-- Browse Tab -->
+      <section id="browse" class="tab-content active">
+        <div id="platformFilterSection" class="platform-filter-section">
+          <label>Platform:</label>
+          <div id="platformFilter" class="platform-filter-options"></div>
+        </div>
+
+        <div id="regionFilterSection" class="platform-filter-section">
+          <label>Region:</label>
+          <div id="regionFilter" class="platform-filter-options"></div>
+        </div>
+
+        <div id="revisionFilterSection" class="platform-filter-section">
+          <label>Revision:</label>
+          <div id="revisionFilter" class="platform-filter-options"></div>
+        </div>
+
+        <div class="search-section">
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search games by name, filename, or platform..."
+            class="search-box"
+          />
+          <button id="fetchBtn" class="btn btn-primary">
+            Refresh Game List
+          </button>
+        </div>
+
+        <div class="search-assist-bar">
+          <div class="search-assist-copy" id="searchAssistText">
+            Smart search matches names, filenames, and platforms.
+          </div>
+          <div class="search-history-controls">
+            <div id="searchHistoryChips" class="search-history-chips"></div>
+            <button
+              id="clearSearchHistoryBtn"
+              class="btn btn-secondary btn-small"
+              type="button"
+            >
+              Clear History
+            </button>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <label>Sort by:</label>
+          <select id="sortBy" class="filter-select">
+            <option value="name">Name (A-Z)</option>
+            <option value="size">File Size</option>
+            <option value="date">Latest First</option>
+          </select>
+          <button
+            id="downloadAllBtn"
+            class="btn btn-secondary"
+            onclick="downloadAll()"
+          >
+            ⏬ Download All
+          </button>
+          <button
+            id="downloadHighestRevisionsBtn"
+            class="btn btn-secondary"
+            onclick="downloadHighestRevisions()"
+          >
+            ⬇ Highest Revs
+          </button>
+          <button
+            id="queueAllBtn"
+            class="btn btn-secondary"
+            onclick="queueAllFiltered()"
+          >
+            ➕ Queue All
+          </button>
+          <button
+            id="queueHighestRevisionsBtn"
+            class="btn btn-secondary"
+            onclick="queueHighestRevisions()"
+          >
+            🧠 Queue Highest Revs
+          </button>
+          <button
+            id="selectModeBtn"
+            class="btn btn-secondary"
+            onclick="toggleSelectMode()"
+          >
+            ☑ Select
+          </button>
+          <button
+            id="downloadSelectedBtn"
+            class="btn btn-primary"
+            onclick="downloadSelected()"
+            style="display: none"
+          >
+            ⬇ Download Selected (<span id="selectedCount">0</span>)
+          </button>
+          <button
+            id="cancelSelectBtn"
+            class="btn btn-danger"
+            onclick="toggleSelectMode()"
+            style="display: none"
+          >
+            ✕ Cancel
+          </button>
+          <button
+            id="selectAllFilteredBtn"
+            class="btn btn-secondary"
+            onclick="selectAllFiltered()"
+            style="display: none"
+          >
+            ☑ Select All Filtered
+          </button>
+          <button
+            id="cancelBatchBtn"
+            class="btn btn-danger"
+            onclick="cancelBatch()"
+            style="display: none"
+          >
+            ⏹ Cancel Batch
+          </button>
+        </div>
+
+        <!-- Letter filter bar -->
+        <div id="letterFilter" class="letter-filter">
+          <button class="letter-btn active" data-letter="">All</button>
+          <button class="letter-btn" data-letter="#">#</button>
+          <button class="letter-btn" data-letter="A">A</button>
+          <button class="letter-btn" data-letter="B">B</button>
+          <button class="letter-btn" data-letter="C">C</button>
+          <button class="letter-btn" data-letter="D">D</button>
+          <button class="letter-btn" data-letter="E">E</button>
+          <button class="letter-btn" data-letter="F">F</button>
+          <button class="letter-btn" data-letter="G">G</button>
+          <button class="letter-btn" data-letter="H">H</button>
+          <button class="letter-btn" data-letter="I">I</button>
+          <button class="letter-btn" data-letter="J">J</button>
+          <button class="letter-btn" data-letter="K">K</button>
+          <button class="letter-btn" data-letter="L">L</button>
+          <button class="letter-btn" data-letter="M">M</button>
+          <button class="letter-btn" data-letter="N">N</button>
+          <button class="letter-btn" data-letter="O">O</button>
+          <button class="letter-btn" data-letter="P">P</button>
+          <button class="letter-btn" data-letter="Q">Q</button>
+          <button class="letter-btn" data-letter="R">R</button>
+          <button class="letter-btn" data-letter="S">S</button>
+          <button class="letter-btn" data-letter="T">T</button>
+          <button class="letter-btn" data-letter="U">U</button>
+          <button class="letter-btn" data-letter="V">V</button>
+          <button class="letter-btn" data-letter="W">W</button>
+          <button class="letter-btn" data-letter="X">X</button>
+          <button class="letter-btn" data-letter="Y">Y</button>
+          <button class="letter-btn" data-letter="Z">Z</button>
+        </div>
+
+        <div class="browse-results-bar">
+          <div id="browseResultsSummary" class="browse-results-summary">
+            Loading games...
+          </div>
+          <div class="browse-pagination-controls">
+            <label for="browsePageSize">Show:</label>
+            <select id="browsePageSize" class="filter-select browse-page-size">
+              <option value="60">60</option>
+              <option value="120" selected>120</option>
+              <option value="240">240</option>
+            </select>
+            <button id="browsePrevPageBtn" class="btn btn-secondary" type="button">
+              ← Prev
+            </button>
+            <span id="browsePageIndicator" class="browse-page-indicator"
+              >Page 1 of 1</span
+            >
+            <button id="browseNextPageBtn" class="btn btn-secondary" type="button">
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <div id="gamesGrid" class="games-grid">
+          <div class="loading">Loading games...</div>
+        </div>
+
+        <div class="workspace-panels">
+          <section class="workspace-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Download Queue</h3>
+                <p id="queueSummaryText" class="panel-subtitle">
+                  No queued downloads yet.
+                </p>
+              </div>
+              <span id="queueActiveBadge" class="status-badge">Idle</span>
+            </div>
+            <div id="queueList" class="queue-list">
+              <div class="empty-state compact">No queued downloads yet</div>
+            </div>
+          </section>
+
+          <section class="workspace-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Background Status</h3>
+                <p class="panel-subtitle">
+                  Metadata sync and service health update automatically.
+                </p>
+              </div>
+            </div>
+            <div id="serviceHealthList" class="service-health-list">
+              <div class="empty-state compact">Checking service health...</div>
+            </div>
+            <div id="metadataSyncCard" class="metadata-sync-card">
+              <strong>Metadata Sync</strong>
+              <span id="metadataSyncText">Waiting for sync activity.</span>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <!-- Downloaded Tab -->
+      <section id="downloaded" class="tab-content">
+        <h2>Downloaded Games</h2>
+
+        <div class="platform-filter-section">
+          <label>Platform:</label>
+          <div id="downloadedPlatformFilter" class="platform-filter-options"></div>
+        </div>
+
+        <div class="platform-filter-section">
+          <label>Region:</label>
+          <div id="downloadedRegionFilter" class="platform-filter-options"></div>
+        </div>
+
+        <div class="platform-filter-section">
+          <label>Revision:</label>
+          <div id="downloadedRevisionFilter" class="platform-filter-options"></div>
+        </div>
+
+        <div id="downloadedLetterFilter" class="letter-filter">
+          <button class="letter-btn active" data-letter="">All</button>
+          <button class="letter-btn" data-letter="#">#</button>
+          <button class="letter-btn" data-letter="A">A</button>
+          <button class="letter-btn" data-letter="B">B</button>
+          <button class="letter-btn" data-letter="C">C</button>
+          <button class="letter-btn" data-letter="D">D</button>
+          <button class="letter-btn" data-letter="E">E</button>
+          <button class="letter-btn" data-letter="F">F</button>
+          <button class="letter-btn" data-letter="G">G</button>
+          <button class="letter-btn" data-letter="H">H</button>
+          <button class="letter-btn" data-letter="I">I</button>
+          <button class="letter-btn" data-letter="J">J</button>
+          <button class="letter-btn" data-letter="K">K</button>
+          <button class="letter-btn" data-letter="L">L</button>
+          <button class="letter-btn" data-letter="M">M</button>
+          <button class="letter-btn" data-letter="N">N</button>
+          <button class="letter-btn" data-letter="O">O</button>
+          <button class="letter-btn" data-letter="P">P</button>
+          <button class="letter-btn" data-letter="Q">Q</button>
+          <button class="letter-btn" data-letter="R">R</button>
+          <button class="letter-btn" data-letter="S">S</button>
+          <button class="letter-btn" data-letter="T">T</button>
+          <button class="letter-btn" data-letter="U">U</button>
+          <button class="letter-btn" data-letter="V">V</button>
+          <button class="letter-btn" data-letter="W">W</button>
+          <button class="letter-btn" data-letter="X">X</button>
+          <button class="letter-btn" data-letter="Y">Y</button>
+          <button class="letter-btn" data-letter="Z">Z</button>
+        </div>
+
+        <div class="workspace-panels downloaded-panels">
+          <section class="workspace-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Recently Downloaded</h3>
+                <p class="panel-subtitle">
+                  Your latest completed downloads appear here first.
+                </p>
+              </div>
+            </div>
+            <div id="recentDownloadsList" class="recent-downloads-list">
+              <div class="empty-state compact">No recent downloads yet</div>
+            </div>
+          </section>
+
+          <section class="workspace-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Collections</h3>
+                <p class="panel-subtitle">
+                  Create hand-picked lists and save games to the active collection.
+                </p>
+              </div>
+            </div>
+
+            <div class="collection-form">
+              <input
+                id="collectionNameInput"
+                class="search-box"
+                type="text"
+                placeholder="Collection name"
+              />
+              <input
+                id="collectionDescriptionInput"
+                class="search-box"
+                type="text"
+                placeholder="Short description (optional)"
+              />
+              <button id="createCollectionBtn" class="btn btn-primary" type="button">
+                Create Collection
+              </button>
+            </div>
+
+            <div id="collectionsList" class="collections-list">
+              <div class="empty-state compact">No collections yet</div>
+            </div>
+
+            <div id="activeCollectionSummary" class="collection-summary empty">
+              Select a collection to see saved games here.
+            </div>
+          </section>
+        </div>
+
+        <div
+          id="collectionGamesSection"
+          class="collection-games-section"
+          style="display: none"
+        >
+          <div class="panel-header">
+            <div>
+              <h3 id="collectionGamesTitle">Collection Games</h3>
+              <p id="collectionGamesSubtitle" class="panel-subtitle">
+                Saved games for the active collection.
+              </p>
+            </div>
+          </div>
+          <div id="collectionGamesGrid" class="games-grid">
+            <div class="empty-state compact">No games saved yet</div>
+          </div>
+        </div>
+
+        <div id="downloadedGrid" class="games-grid">
+          <div class="empty-state">No games downloaded yet</div>
+        </div>
+      </section>
+
+      <!-- Settings Tab -->
+      <section id="settings" class="tab-content">
+        <div class="settings-container">
+          <h2>Settings</h2>
+
+          <div class="setting-group">
+            <h3>Download Folder</h3>
+            <p class="setting-desc">
+              Downloaded games are organized automatically so each platform stays
+              separate and easy to browse.
+            </p>
+            <ul class="setting-details">
+              <li>Downloads are grouped by platform/source</li>
+              <li>Existing files stay linked to your library</li>
+              <li>Reindex if files were moved outside the app</li>
+            </ul>
+          </div>
+
+          <div class="setting-group">
+            <h3>Library Maintenance</h3>
+            <p class="setting-desc">
+              Use these tools to clean up your library and keep downloaded games
+              in sync with what is on disk.
+            </p>
+            <ul class="setting-details">
+              <li>Remove broken placeholder entries</li>
+              <li>Refresh the full game catalog from Myrient</li>
+              <li>Rescan your downloaded files without re-fetching the library</li>
+            </ul>
+            <button id="cleanupBtn" class="btn btn-secondary">
+              Remove Invalid Entries
+            </button>
+          </div>
+
+          <div class="setting-group">
+            <h3>Rebuild Library</h3>
+            <p class="setting-desc">
+              Re-fetches the game list from Myrient, removes stale entries,
+              preserves your saved details and download history, and recovers any
+              files already present in your downloads folder.
+            </p>
+            <button
+              id="rebuildBtn"
+              class="btn btn-secondary"
+              onclick="rebuildLibrary()"
+            >
+              🔄 Rebuild Library
+            </button>
+            <button
+              id="reindexDownloadsBtn"
+              class="btn btn-secondary"
+              onclick="reindexDownloadedGames()"
+            >
+              🔁 Reindex Downloaded Games
+            </button>
+            <p class="setting-desc">
+              Re-scans your downloads folder and updates which games are marked
+              as downloaded without refreshing the full remote library.
+            </p>
+          </div>
+
+          <div class="setting-group">
+            <h3>About</h3>
+            <p>Myrient Get v1.0.0</p>
+            <p>
+              A simple frontend for downloading games from
+              <a href="https://myrient.erista.me/" target="_blank">Myrient</a>
+            </p>
+            <p>
+              Current sources: RetroAchievements GBA, No-Intro NES/N64/SNES,
+              and Redump PS1/PS2/PSP
+            </p>
+          </div>
+
+          <div class="setting-group">
+            <h3>Service Status</h3>
+            <p class="setting-desc">
+              These live indicators help you spot sync or metadata issues without
+              digging through logs.
+            </p>
+            <div id="settingsServiceHealthList" class="service-health-list">
+              <div class="empty-state compact">Checking service health...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Download Modal -->
+    <div id="downloadModal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cancelCurrentDownload()">&times;</span>
+        <h2>Downloading <span id="downloadName"></span></h2>
+
+        <!-- Spinner Loader -->
+        <div class="download-spinner-container">
+          <div class="spinner"></div>
+          <p id="progressText" class="progress-status">Preparing download...</p>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <p id="progressPercentage" class="progress-percentage">0%</p>
+
+        <button
+          id="cancelBtn"
+          class="btn btn-danger"
+          onclick="cancelCurrentDownload()"
+        >
+          Cancel Download
+        </button>
+      </div>
+    </div>
+
+    <!-- Metadata Modal -->
+    <div id="metadataModal" class="modal metadata-modal">
+      <div class="modal-content metadata-modal-content">
+        <span class="close" onclick="closeMetadataModal()">&times;</span>
+        <div id="metadataContent" class="metadata-content">
+          <!-- Content loaded dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
