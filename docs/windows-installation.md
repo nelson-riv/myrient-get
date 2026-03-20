@@ -29,10 +29,10 @@ npm install
 npm start
 ```
 
-Expected URL:
+Default URL:
 
 ```text
-http://localhost:3001
+http://127.0.0.1:3001
 ```
 
 ## 5. Optional: use a different port
@@ -50,7 +50,7 @@ Restart the terminal or reinstall Node.js, making sure PATH integration is enabl
 
 ### Port already in use
 
-Start with another `PORT` value as shown above.
+Set a different `PORT` value as shown above.
 
 ### App starts but the browser page is empty
 
@@ -64,7 +64,7 @@ Then restart the server.
 
 ### Downloads fail
 
-Check:
+Check the following:
 
 - internet connection
 - write access to `downloads\`

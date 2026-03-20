@@ -1,27 +1,25 @@
-# Myrient Get Documentation
+# Myrient Get
 
-This folder contains the current documentation for `myrient-get`.
+`myrient-get` is a local web application for browsing, filtering, organizing, and downloading selected game libraries sourced from Myrient.
 
-## Start here
+## Documentation index
+
+### End-user documentation
 
 - [Getting Started](getting-started.md)
 - [Windows Installation](windows-installation.md)
 - [User Guide](user-guide.md)
 - [Quick Reference](quick-reference.md)
 
-## Technical docs
+### Technical documentation
 
 - [Architecture Overview](architecture.md)
 - [Developer Guide](developer-guide.md)
 - [Myrient Compliance](myrient-compliance.md)
 - [TypeScript Migration Notes](typescript-migration.md)
-- [Completion Summary](completion-summary.md)
+- [Project Status](completion-summary.md)
 
-## What the app does
-
-`myrient-get` is a local web app for browsing, filtering, organizing, and downloading game libraries sourced from Myrient.
-
-Current source coverage includes:
+## Supported library sources
 
 - Nintendo Game Boy Advance
 - Nintendo 64
@@ -31,19 +29,19 @@ Current source coverage includes:
 - Sony PlayStation 2
 - Sony PlayStation Portable
 
-## Current highlights
+## Core capabilities
 
-- SQLite-backed library storage
-- Faster browse/search experience with local ranking and pagination
-- Hierarchical platform, region, and revision filters
+- SQLite-backed local library storage
+- Local ranked search with pagination
+- Cascading platform, region, and revision filters
 - Persistent download queue
 - Collections and recent downloads
-- LaunchBox and TheGamesDB metadata integration
-- Health and metadata sync status endpoints
+- LaunchBox metadata with optional TheGamesDB fallback
+- Service health and metadata synchronization status
 
 ## Recommended reading order
 
 1. [Getting Started](getting-started.md)
 2. [User Guide](user-guide.md)
 3. [Quick Reference](quick-reference.md)
-4. [Architecture Overview](architecture.md) if you plan to extend the project
+4. [Architecture Overview](architecture.md)

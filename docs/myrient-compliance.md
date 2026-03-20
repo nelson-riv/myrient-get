@@ -5,9 +5,9 @@ This project includes request throttling and identification rules intended to st
 ## Current protections
 
 - minimum delay between Myrient requests: `500ms`
-- explicit User-Agent header on Myrient requests
-- directory-based source handling instead of raw file hotlinking workflows
-- invalid parent-directory entries filtered out during scraping
+- explicit `User-Agent` header on Myrient requests
+- directory-based source handling rather than raw file hotlinking
+- invalid parent-directory entries filtered during scraping
 
 ## Key implementation points
 
@@ -25,6 +25,6 @@ Myrient-Get/1.0 (+https://github.com/myrient-get)
 
 ## Operational guidance
 
-- avoid repeatedly refreshing the full catalog when not needed
-- prefer queued or normal in-app downloads over custom aggressive automation
-- if Myrient behavior changes, review the current FAQ and adjust the request layer accordingly
+- avoid repeatedly refreshing the full catalog when not required
+- prefer the built-in queue and download workflows over custom automation
+- review Myrient guidance periodically and adjust the request layer if requirements change

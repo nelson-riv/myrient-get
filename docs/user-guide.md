@@ -2,28 +2,28 @@
 
 ## Browse Games
 
-Use the Browse tab to:
+Use the `Browse Games` tab to:
 
-- search by name, filename, or platform
+- search by game name, filename, or platform
 - filter by platform, region, revision, and first letter
 - sort by name, size, or newest date
-- view paginated results for better performance
-- open metadata details for any game card
+- review paginated results
+- open metadata details for any game
 
 ## Search behavior
 
-Search is local and ranked.
+Search runs locally against the cached library and uses ranked matching.
 
-The app favors:
+Ranking favors:
 
 - close title matches
 - filename matches
 - platform matches
-- recent search history for quick reuse
+- recent search terms
 
 ## Downloads
 
-You can:
+The application supports:
 
 - download a single title directly
 - queue titles for background processing
@@ -32,9 +32,9 @@ You can:
 - cancel an active direct download
 - pause, resume, or remove queue items
 
-## Downloaded tab
+## Downloaded
 
-The Downloaded area includes:
+The `Downloaded` tab includes:
 
 - downloaded game browsing with the same cascade filters
 - recently downloaded titles
@@ -43,9 +43,9 @@ The Downloaded area includes:
 
 ## Collections
 
-Collections let you create lightweight saved lists.
+Collections provide simple saved lists for manual organization.
 
-Typical flow:
+Typical usage:
 
 1. Create a collection.
 2. Open it as the active collection.
@@ -54,7 +54,7 @@ Typical flow:
 
 ## Settings
 
-Use Settings for maintenance operations:
+Use `Settings` for maintenance operations:
 
 - remove invalid entries
 - rebuild the remote library while preserving metadata and downloads
@@ -63,9 +63,9 @@ Use Settings for maintenance operations:
 
 ## Metadata
 
-The app uses:
+Metadata support includes:
 
 - LaunchBox metadata when available
-- TheGamesDB as a fallback
+- TheGamesDB as an optional fallback
 - background metadata sync for new games
 - cached box art where possible

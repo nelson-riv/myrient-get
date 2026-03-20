@@ -1,6 +1,6 @@
 # Developer Guide
 
-## Working locally
+## Local development
 
 ### Install
 
@@ -16,7 +16,7 @@ The app loads `.env` automatically with `dotenv`.
 Copy-Item .env.example .env
 ```
 
-Current supported variables:
+Supported variables:
 
 - `PORT`
 - `HOST`
@@ -52,7 +52,7 @@ npm run test:features
 - `src\myrient-sources.ts` - source catalog
 - `public\app.js` - client-side state and rendering
 
-## Current feature areas
+## Feature areas
 
 ### Backend
 
@@ -71,7 +71,7 @@ npm run test:features
 - recent downloads
 - service status display
 
-## Recommended next engineering work
+## Current engineering priorities
 
 - split `public\app.js` into modules
 - split route handlers out of `src\server.ts`

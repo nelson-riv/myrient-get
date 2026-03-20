@@ -1,24 +1,22 @@
-# Completion Summary
+# Project Status
 
-The project has moved well beyond the original single-platform downloader scope.
-
-## Current shape of the app
+## Current capabilities
 
 - multi-platform Myrient catalog support
 - SQLite-backed storage
-- improved browse performance
-- metadata enrichment through LaunchBox and TheGamesDB
-- persistent queue and collections
-- health and sync visibility
-- targeted validation scripts for core behavior and new features
+- improved browse performance with local search and pagination
+- metadata enrichment through LaunchBox and optional TheGamesDB fallback
+- persistent queue, collections, and recent downloads
+- service health and metadata synchronization visibility
+- targeted validation scripts for core and feature workflows
 
-## Documentation reorganization
+## Repository documentation
 
-Documentation was consolidated into `docs\` so the repository root stays focused on code and runtime assets.
+Project documentation is maintained under `docs\` so the repository root can remain focused on source code and runtime assets.
 
-## Validation state
+## Validation baseline
 
-Recent validation includes:
+The current validation baseline includes:
 
 - `npm run build`
 - `npm run test:compliance`

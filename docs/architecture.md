@@ -26,15 +26,15 @@ Services
   -> src\launchbox-service.ts
   -> src\image-cache-service.ts
   -> src\thegamesdb-service.ts
-  -> src\myrient-sources.ts
-  -> src\app-types.ts
+   -> src\myrient-sources.ts
+   -> src\app-types.ts
 ```
 
 ## Storage
 
-Primary local storage is `data\games.db`.
+Primary application storage is `data\games.db`.
 
-Main persisted concepts:
+Persisted data includes:
 
 - games
 - collections
@@ -77,8 +77,8 @@ Encapsulates:
 - modal handling
 - status polling
 
-## Current design trade-offs
+## Design notes
 
 - Backend services are partially extracted, but route logic is still concentrated in `src\server.ts`.
 - Frontend behavior is rich, but still lives in one large file.
-- The app is optimized for local single-user usage rather than multi-user deployment.
+- The application is designed for local single-user usage rather than multi-user deployment.

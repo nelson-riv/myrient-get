@@ -18,12 +18,12 @@ npm run watch
 
 ## Shared type modules
 
-The original in-file type definitions were refactored into shared modules such as:
+Shared backend definitions now live in modules such as:
 
 - `src\app-types.ts`
 - `src\validation.ts`
 - `src\myrient-sources.ts`
 
-## Practical note
+## Current state
 
-The migration is complete enough for day-to-day development, but `src\server.ts` and `public\app.js` are still the largest refactoring candidates.
+The migration is complete for day-to-day development. The largest remaining refactoring targets are `src\server.ts` and `public\app.js`, which still contain a significant amount of application logic.

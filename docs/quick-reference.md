@@ -1,6 +1,6 @@
 # Quick Reference
 
-## Start
+## Start the application
 
 ```powershell
 cd d:\Projects\myrient-get
@@ -8,7 +8,7 @@ npm install
 npm start
 ```
 
-Open `http://localhost:3001`.
+Open `http://127.0.0.1:3001`.
 
 ## Build and validation
 
@@ -19,7 +19,7 @@ npm run test:fallback
 npm run test:features
 ```
 
-## Common runtime command
+## Override the default port
 
 ```powershell
 $env:PORT=3002
@@ -38,7 +38,7 @@ npm start
 
 ### Library and search
 
-- `GET /api/fetch-games`
+- `POST /api/fetch-games`
 - `GET /api/games`
 - `GET /api/search?q=...`
 - `GET /api/stats`
@@ -77,7 +77,7 @@ npm start
 
 ## Common issues
 
-- Port in use: start with another `PORT`
+- Port already in use: start with another `PORT`
 - Missing dependencies: run `npm install`
 - Broken local state: rebuild or reindex from Settings
-- Slow first fetch: expected during the initial Myrient catalog import
+- Slow initial catalog load: expected during the first Myrient import
