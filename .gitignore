@@ -10,6 +10,8 @@ data/games.db
 data/games.db-shm
 data/games.db-wal
 data/image-cache/
+data/launchbox-images/
+data/launchbox-metadata/
 
 # Environment files
 .env
