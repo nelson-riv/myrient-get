@@ -287,19 +287,30 @@ export class ImageCacheService {
     const pinnedLookup = (
       (
         hostname: string,
-        _options: unknown,
+        options: { all?: boolean } | number | undefined,
         callback: (
           error: Error | null,
-          address: string,
-          family: number,
+          address: string | LookupAddress[],
+          family?: number,
         ) => void,
       ) => {
         if (hostname.toLowerCase() !== expectedHostname.toLowerCase()) {
-          callback(
-            new Error("Unexpected hostname during remote image fetch"),
-            pinnedAddress.address,
-            pinnedAddress.family,
-          )
+          if (typeof options === "object" && options?.all) {
+            callback(new Error("Unexpected hostname during remote image fetch"), [])
+          } else {
+            callback(
+              new Error("Unexpected hostname during remote image fetch"),
+              pinnedAddress.address,
+              pinnedAddress.family,
+            )
+          }
+          return
+        }
+
+        if (typeof options === "object" && options?.all) {
+          callback(null, [
+            { address: pinnedAddress.address, family: pinnedAddress.family },
+          ])
           return
         }
 
