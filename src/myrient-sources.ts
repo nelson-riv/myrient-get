@@ -16,6 +16,20 @@ export const MYRIENT_SOURCES: MyrientSource[] = [
       "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%2064%20%28BigEndian%29/",
   },
   {
+    id: "nds-decrypted",
+    label: "No-Intro Nintendo DS (Decrypted)",
+    platform: "Nintendo DS",
+    baseURL:
+      "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%20DS%20%28Decrypted%29/",
+  },
+  {
+    id: "n3ds-decrypted",
+    label: "No-Intro Nintendo 3DS (Decrypted)",
+    platform: "Nintendo 3DS",
+    baseURL:
+      "https://myrient.erista.me/files/No-Intro/Nintendo%20-%20Nintendo%203DS%20%28Decrypted%29/",
+  },
+  {
     id: "nes-headered",
     label: "No-Intro Nintendo Entertainment System (Headered)",
     platform: "Nintendo Entertainment System",

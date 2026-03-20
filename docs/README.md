@@ -23,6 +23,8 @@
 
 - Nintendo Game Boy Advance
 - Nintendo 64
+- Nintendo DS
+- Nintendo 3DS
 - Nintendo Entertainment System
 - Super Nintendo Entertainment System
 - Sony PlayStation

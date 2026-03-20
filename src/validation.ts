@@ -63,9 +63,11 @@ export const requestSchemas = {
   metadata: z.object({
     gameId: z.coerce.number().int().positive(),
     gameName: z.string().min(1),
+    platform: z.string().min(1).optional(),
   }),
   launchboxMetadata: z.object({
     gameName: z.string().min(1),
+    platform: z.string().min(1).optional(),
   }),
   launchboxSearch: z.object({
     q: z.string().min(1),
@@ -87,10 +89,16 @@ export const requestSchemas = {
   thegamesdbSearch: z.object({
     name: z.string().min(1),
   }),
-  fetchBoxArt: z.object({
-    gdbId: z.coerce.number().int().positive(),
-    gameName: z.string().min(1),
-  }),
+  fetchBoxArt: z
+    .object({
+      gdbId: z.coerce.number().int().positive().optional(),
+      launchboxId: z.coerce.number().int().positive().optional(),
+      gameName: z.string().min(1),
+    })
+    .refine((value) => value.gdbId || value.launchboxId, {
+      message: "Either gdbId or launchboxId is required",
+      path: ["gdbId"],
+    }),
   saveBoxArt: z.object({
     gameId: z.coerce.number().int().positive(),
     boxArtPath: z.string().regex(/^\/cached-images\/[^\/\\]+$/),

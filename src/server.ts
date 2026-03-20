@@ -18,6 +18,7 @@ import {
   getTheGamesDBService,
 } from "./thegamesdb-service"
 import { getDatabaseService } from "./db-service"
+import { getLaunchBoxBoxArtService } from "./launchbox-box-art-service"
 import { logger } from "./logger"
 import {
   requestSchemas,
@@ -32,6 +33,7 @@ const HOST = process.env.HOST?.trim() || "127.0.0.1"
 
 // Initialize services
 const launchbox = getLaunchBoxService()
+const launchboxBoxArt = getLaunchBoxBoxArtService()
 const imageCache = getImageCacheService()
 const thegamesdb = getTheGamesDBService()
 const DOWNLOADS_DIR = path.join(__dirname, "..", "downloads")
@@ -375,7 +377,7 @@ const metadataSyncState = {
 const metadataSyncQueue = new Map<number, Game>()
 
 async function syncMetadataForGame(game: Game): Promise<boolean> {
-  const launchBoxMetadata = launchbox.getMetadata(game.name)
+  const launchBoxMetadata = launchbox.getMetadata(game.name, game.platform)
 
   if (launchBoxMetadata) {
     DB.update(game.id, {
@@ -836,15 +838,15 @@ app.post(
     try {
       console.log(`Fetching metadata for: "${gameName}"`)
 
-      // Use LaunchBox metadata
-      const metadata = launchbox.getMetadata(gameName)
+      const game = DB.findById(gameId)
+      const metadata = launchbox.getMetadata(gameName, game?.platform)
 
       if (metadata) {
         console.log(`✓ Found metadata for "${gameName}":`, metadata)
 
         // Prepare update object with LaunchBox data (no image fetching)
         const updates: any = {
-          release_date: metadata.releaseYear,
+          release_date: metadata.releaseDate || metadata.releaseYear,
           description: metadata.overview,
           developer: metadata.developer,
           publisher: metadata.publisher,
@@ -856,6 +858,7 @@ app.post(
           success: true,
           message: "Metadata fetched from LaunchBox",
           metadata,
+          source: "launchbox",
           box_art: null, // No auto-fetching from LaunchBox
         })
       } else {
@@ -1003,7 +1006,10 @@ app.post(
   "/api/launchbox-metadata",
   validateBody(requestSchemas.launchboxMetadata),
   async (req: Request, res: Response): Promise<void> => {
-    const { gameName } = req.body as { gameName: string }
+      const { gameName, platform } = req.body as {
+        gameName: string
+        platform?: string
+      }
 
     try {
       if (!gameName) {
@@ -1012,7 +1018,7 @@ app.post(
       }
 
       // Try LaunchBox first
-      const metadata = launchbox.getMetadata(gameName)
+      const metadata = launchbox.getMetadata(gameName, platform)
 
       if (metadata) {
         res.json({ success: true, metadata, source: "launchbox" })
@@ -1209,17 +1215,32 @@ app.get(
   validateQuery(requestSchemas.fetchBoxArt),
   async (req: Request, res: Response): Promise<void> => {
     const gdbId = parseInt((req.query.gdbId as string) || "0", 10)
+    const launchboxId = parseInt((req.query.launchboxId as string) || "0", 10)
     const gameName = (req.query.gameName as string) || ""
 
     try {
-      if (!gdbId || !gameName) {
+      if ((!gdbId && !launchboxId) || !gameName) {
         res
           .status(400)
-          .json({ success: false, error: "gdbId and gameName required" })
+          .json({
+            success: false,
+            error: "gameName and either gdbId or launchboxId are required",
+          })
         return
       }
 
-      const boxArtUrl = await thegamesdb.getBoxArt(gdbId)
+      let boxArtUrl: string | null = null
+      let source = ""
+
+      if (launchboxId) {
+        boxArtUrl = await launchboxBoxArt.getBoxArt(launchboxId)
+        source = "launchbox"
+      }
+
+      if (!boxArtUrl && gdbId) {
+        boxArtUrl = await thegamesdb.getBoxArt(gdbId)
+        source = "thegamesdb"
+      }
 
       if (boxArtUrl) {
         const cachedImagePath = imageCache.getCachedImage(gameName, boxArtUrl)
@@ -1229,6 +1250,7 @@ app.get(
             success: true,
             boxArtUrl: filePathToUrl(cachedImagePath),
             cached: true,
+            source,
           })
           return
         }
@@ -1246,6 +1268,7 @@ app.get(
           success: true,
           boxArtUrl: filePathToUrl(localPath),
           cached: false,
+          source,
         })
       } else {
         res.json({ success: false, message: "No box art found for this game" })
@@ -1552,7 +1575,7 @@ app.listen(PORT, HOST, async () => {
     `Myrient sources: ${MYRIENT_SOURCES.map((source) => source.label).join(", ")}`,
   )
   logger.info(
-    `LaunchBox metadata: ${launchbox.getGameCount()} GBA games indexed`,
+    `LaunchBox metadata: ${launchbox.getGameCount()} games across ${launchbox.getPlatformCount()} platforms`,
   )
   logger.info(
     `TheGamesDB fallback: ${serviceStates.thegamesdb.status === "ready" ? "Available" : "Degraded"}`,

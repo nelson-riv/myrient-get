@@ -100,7 +100,7 @@ const BROWSE_SEARCH_DEBOUNCE_MS = 150;
 const DEFAULT_BROWSE_PAGE_SIZE = 120;
 const SEARCH_HISTORY_STORAGE_KEY = 'myrientGet.searchHistory';
 const MAX_SEARCH_HISTORY = 6;
-const PLATFORM_ORDER = ['Nintendo Game Boy Advance', 'Nintendo 64', 'Nintendo Entertainment System', 'Super Nintendo Entertainment System', 'Sony PlayStation', 'Sony PlayStation 2', 'Sony PlayStation Portable'];
+const PLATFORM_ORDER = ['Nintendo Game Boy Advance', 'Nintendo 64', 'Nintendo DS', 'Nintendo 3DS', 'Nintendo Entertainment System', 'Super Nintendo Entertainment System', 'Sony PlayStation', 'Sony PlayStation 2', 'Sony PlayStation Portable'];
 const REGION_ORDER = ['USA', 'Europe', 'Japan', 'World', 'Australia', 'Korea', 'Asia', 'Brazil', 'Canada', 'China', 'Taiwan', 'Hong Kong', 'France', 'Germany', 'Italy', 'Spain', 'Netherlands', 'Sweden', 'Russia', 'Unknown'];
 const REGION_ALIASES = {
     'USA': 'USA',
@@ -2224,12 +2224,14 @@ function displayMetadataModal(gameName, data) {
     const escapedGameName = escapeForSingleQuotedJs(gameName);
     let actionButtonsHtml = `<button class="btn btn-primary" onclick="downloadGame(${currentMetadataGame.gameId}, '${escapedModalFilename}')">Download Game</button>`;
 
-    // Always offer to fetch box art from TheGamesDB
+    if (game.databaseId) {
+        actionButtonsHtml += `<button class="btn btn-secondary" onclick="fetchBoxArtFromLaunchBox(${game.databaseId}, '${escapedGameName}')">Fetch LaunchBox Box Art</button>`;
+    }
+
     if (game.gdbId) {
-        actionButtonsHtml += `<button class="btn btn-secondary" onclick="fetchBoxArtFromTheGamesDB(${game.gdbId}, '${escapedGameName}')">Fetch Box Art</button>`;
+        actionButtonsHtml += `<button class="btn btn-secondary" onclick="fetchBoxArtFromTheGamesDB(${game.gdbId}, '${escapedGameName}')">Fetch TheGamesDB Box Art</button>`;
     } else if (source === 'launchbox' || source === 'unknown') {
-        // For LaunchBox games without gdbId, search first then fetch
-        actionButtonsHtml += `<button class="btn btn-secondary" onclick="searchAndFetchBoxArt('${escapedGameName}')">Fetch Box Art</button>`;
+        actionButtonsHtml += `<button class="btn btn-secondary" onclick="searchAndFetchBoxArt('${escapedGameName}')">Search TheGamesDB Box Art</button>`;
     }
 
     // Add replace image button if we have a box art URL
@@ -2283,6 +2285,36 @@ async function fetchMetadata(gameId, gameName) {
         }
     } catch (error) {
         showToast('Error fetching metadata: ' + error.message, 'error');
+    }
+}
+
+// Fetch box art from TheGamesDB by game ID (on-demand)
+async function fetchBoxArtFromLaunchBox(launchboxId, gameName) {
+    try {
+        const response = await fetch(`/api/fetch-box-art?launchboxId=${launchboxId}&gameName=${encodeURIComponent(gameName)}`);
+        const data = await response.json();
+
+        if (data.success && data.boxArtUrl) {
+            const saveResponse = await fetch('/api/save-box-art', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ gameId: currentMetadataGame.gameId, boxArtPath: data.boxArtUrl })
+            });
+            await saveResponse.json();
+
+            const imgElement = document.querySelector('.metadata-boxart');
+            if (imgElement) {
+                imgElement.src = data.boxArtUrl;
+            } else {
+                await openGameMetadata(currentMetadataGame.gameId, currentMetadataGame.gameName);
+            }
+
+            showToast(data.cached ? 'Using cached LaunchBox box art' : 'Box art fetched from LaunchBox!', 'success');
+        } else {
+            showToast('No box art found on LaunchBox', 'info');
+        }
+    } catch (error) {
+        showToast('Error fetching LaunchBox box art: ' + error.message, 'error');
     }
 }
 
