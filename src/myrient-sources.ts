@@ -52,7 +52,7 @@ export const MYRIENT_SOURCES: MyrientSource[] = [
   {
     id: "ps2-redump",
     label: "Redump Sony PlayStation 2",
-    platform: "Sony PlayStation 2",
+    platform: "Sony PlayStation 2 Redump",
     baseURL:
       "https://myrient.erista.me/files/Redump/Sony%20-%20PlayStation%202/",
   },
@@ -62,6 +62,20 @@ export const MYRIENT_SOURCES: MyrientSource[] = [
     platform: "Sony PlayStation Portable",
     baseURL:
       "https://myrient.erista.me/files/Redump/Sony%20-%20PlayStation%20Portable/",
+  },
+  {
+    id: "ps2-retroachievements",
+    label: "RetroAchievements Sony PlayStation 2",
+    platform: "Sony PlayStation 2 RetroAchievements",
+    baseURL:
+      "https://myrient.erista.me/files/RetroAchievements/RA%20-%20Sony%20Playstation%202/",
+  },
+  {
+    id: "gamecube-tosec",
+    label: "TOSEC Nintendo GameCube",
+    platform: "Nintendo GameCube",
+    baseURL:
+      "https://myrient.erista.me/files/TOSEC-ISO/Nintendo/GameCube/Games/",
   },
 ]
 

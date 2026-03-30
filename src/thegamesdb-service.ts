@@ -53,7 +53,8 @@ class TheGamesDBService {
   private initialized = false
   private requestCount = 0
   private lastRequestTime = 0
-  private minDelay = 100 // Minimum delay between requests (ms)
+  private minDelay = 500 // Minimum delay between requests (ms)
+  private rateLimitedUntil = 0 // Timestamp until which requests are paused after a 429
 
   /**
    * Initialize the service (can be used to validate connection)
@@ -101,6 +102,10 @@ class TheGamesDBService {
       return null
     }
 
+    if (Date.now() < this.rateLimitedUntil) {
+      return null
+    }
+
     try {
       // Rate limiting: respect minimum delay
       const now = Date.now()
@@ -135,6 +140,17 @@ class TheGamesDBService {
       return games[0] as TheGamesDBGame
     } catch (error) {
       const err = error as AxiosError
+      if (err.response?.status === 429) {
+        const retryAfter = parseInt(
+          err.response.headers?.["retry-after"] || "60",
+          10,
+        )
+        this.rateLimitedUntil = Date.now() + retryAfter * 1000
+        console.warn(
+          `TheGamesDB rate limited; pausing requests for ${retryAfter}s`,
+        )
+        return null
+      }
       if (err.response?.status === 404) {
         return null // Game not found is not an error
       }
@@ -152,6 +168,10 @@ class TheGamesDBService {
     }
 
     if (!this.initialized) {
+      return null
+    }
+
+    if (Date.now() < this.rateLimitedUntil) {
       return null
     }
 
@@ -215,6 +235,18 @@ class TheGamesDBService {
 
       return metadata
     } catch (error) {
+      const err = error as AxiosError
+      if (err.response?.status === 429) {
+        const retryAfter = parseInt(
+          err.response.headers?.["retry-after"] || "60",
+          10,
+        )
+        this.rateLimitedUntil = Date.now() + retryAfter * 1000
+        console.warn(
+          `TheGamesDB rate limited; pausing requests for ${retryAfter}s`,
+        )
+        return null
+      }
       console.error(
         "Error fetching TheGamesDB metadata:",
         (error as Error).message,
@@ -232,6 +264,10 @@ class TheGamesDBService {
     }
 
     if (!this.initialized) {
+      return null
+    }
+
+    if (Date.now() < this.rateLimitedUntil) {
       return null
     }
 
@@ -279,6 +315,18 @@ class TheGamesDBService {
 
       return null
     } catch (error) {
+      const err = error as AxiosError
+      if (err.response?.status === 429) {
+        const retryAfter = parseInt(
+          err.response.headers?.["retry-after"] || "60",
+          10,
+        )
+        this.rateLimitedUntil = Date.now() + retryAfter * 1000
+        console.warn(
+          `TheGamesDB rate limited; pausing requests for ${retryAfter}s`,
+        )
+        return null
+      }
       console.error(
         "Error fetching TheGamesDB images:",
         (error as Error).message,

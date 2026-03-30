@@ -708,6 +708,10 @@ body {
   font-weight: 500;
 }
 
+.game-detail--filename span:last-child {
+  word-break: break-all;
+}
+
 .game-actions {
   display: flex;
   gap: 8px;

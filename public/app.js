@@ -123,7 +123,31 @@ const REGION_ALIASES = {
     'Sweden': 'Sweden',
     'Russia': 'Russia',
     'USA, Europe': 'USA',
-    'Europe, USA': 'Europe'
+    'Europe, USA': 'Europe',
+    // TOSEC two-letter country codes
+    'US': 'USA',
+    'EU': 'Europe',
+    'JP': 'Japan',
+    'AU': 'Australia',
+    'KR': 'Korea',
+    'BR': 'Brazil',
+    'CA': 'Canada',
+    'CN': 'China',
+    'TW': 'Taiwan',
+    'HK': 'Hong Kong',
+    'FR': 'France',
+    'DE': 'Germany',
+    'IT': 'Italy',
+    'ES': 'Spain',
+    'NL': 'Netherlands',
+    'SE': 'Sweden',
+    'RU': 'Russia',
+    // TOSEC video standard fallbacks (when no country code present)
+    'NTSC': 'USA',
+    'PAL': 'Europe',
+    'NTSC-U': 'USA',
+    'NTSC-J': 'Japan',
+    'PAL-E': 'Europe',
 };
 
 function escapeForSingleQuotedJs(value) {
@@ -1329,6 +1353,10 @@ function renderGameCards(games, isDownloaded = false, options = {}) {
                 </div>
                 ${game.developer ? `<div class="game-detail"><span>Dev:</span><span>${safeDeveloper}</span></div>` : ''}
                 ${game.release_date ? `<div class="game-detail"><span>Released:</span><span>${safeReleaseDate}</span></div>` : ''}
+                <div class="game-detail game-detail--filename">
+                    <span>File:</span>
+                    <span title="${escapeForHtmlAttribute(game.filename)}">${escapeHtml(game.filename)}</span>
+                </div>
             </div>
             <div class="game-actions">
                 ${collectionView ? `
